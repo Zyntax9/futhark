@@ -471,7 +471,7 @@ compileProg module_name constructor imports defines ops userstate boilerplate pr
             If (simpleCall "!entry_points.ContainsKey" [Var "entry_point"])
               [ Exp $ simpleCall "Console.WriteLine"
                   [simpleCall "string.Format"
-                    [ String "No entry point '{}'.  Select another with --entry point.  Options are:\n{}"
+                    [ String "No entry point '{0}'.  Select another with --entry point.  Options are:\n{1}"
                     , Var "entry_point"
                     , simpleCall "string.Join"
                         [ String "\n"
@@ -618,9 +618,9 @@ entryPointInput (i, Imp.OpaqueValue _ vs, e) =
   mapM_ entryPointInput $ zip3 (repeat i) (map Imp.TransparentValue vs) $
     map (\idx -> Field e $ "Item" ++ show (idx :: Int)) [1..]
 
-entryPointInput (_, Imp.TransparentValue (Imp.ScalarValue bt ept name), e) = do
+entryPointInput (_, Imp.TransparentValue (Imp.ScalarValue bt _ name), e) = do
   let vname' = Var $ compileName name
-      csconverter = compileTypeConverterExt bt ept
+      csconverter = compileTypeConverter bt
       cscall = simpleCall csconverter [e]
   stm $ Assign vname' cscall
 
