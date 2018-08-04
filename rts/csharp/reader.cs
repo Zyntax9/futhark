@@ -258,10 +258,26 @@
         return x;
     }
 
-    int ReadStrUint(string s)
+    ulong ReadStrUInt64(string s)
     {
         SkipSpaces();
-        var x = Convert.ToInt32(ParseInt());
+        var x = Convert.ToUInt64(ParseInt());
+        OptionalSpecificString(s);
+        return x;
+    }
+
+    long ReadStrInt64(string s)
+    {
+        SkipSpaces();
+        var x = Convert.ToInt64(ParseIntSigned());
+        OptionalSpecificString(s);
+        return x;
+    }
+
+    uint ReadStrUInt(string s)
+    {
+        SkipSpaces();
+        var x = Convert.ToUInt32(ParseInt());
         OptionalSpecificString(s);
         return x;
     }
@@ -269,11 +285,11 @@
     int ReadStrI8(){return ReadStrInt("i8");}
     int ReadStrI16(){return ReadStrInt("i16");}
     int ReadStrI32(){return ReadStrInt("i32");}
-    int ReadStrI64(){return ReadStrInt("i64");}
-    int ReadStrU8(){return ReadStrInt("u8");}
-    int ReadStrU16(){return ReadStrInt("u16");}
-    int ReadStrU32(){return ReadStrInt("u32");}
-    int ReadStrU64(){return ReadStrInt("u64");}
+    long ReadStrI64(){return ReadStrInt64("i64");}
+    uint ReadStrU8(){return ReadStrUInt("u8");}
+    uint ReadStrU16(){return ReadStrUInt("u16");}
+    uint ReadStrU32(){return ReadStrUInt("u32");}
+    ulong ReadStrU64(){return ReadStrUInt64("u64");}
     sbyte ReadBinI8(){return (sbyte) b.ReadByte();}
     short ReadBinI16(){return b.ReadInt16();}
     int ReadBinI32(){return b.ReadInt32();}
