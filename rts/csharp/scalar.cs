@@ -248,6 +248,7 @@ static double fpconv_f32_f64(float x){return Convert.ToDouble(x);}
 static float fpconv_f64_f32(double x){return Convert.ToSingle(x);}
 
 static double futhark_log64(double x){return Math.Log(x);}
+static double futhark_log10_64(double x){return Math.Log10(x);}
 static double futhark_sqrt64(double x){return Math.Sqrt(x);}
 static double futhark_exp64(double x){return Math.Exp(x);}
 static double futhark_cos64(double x){return Math.Cos(x);}
@@ -263,6 +264,7 @@ static long futhark_to_bits64(double x){return BitConverter.ToInt64(BitConverter
 static double futhark_from_bits64(long x){return BitConverter.ToDouble(BitConverter.GetBytes(x),0);}
 
 static float futhark_log32(float x){return (float) Math.Log(x);}
+static float futhark_log10_32(float x){return (float) Math.Log10(x);}
 static float futhark_sqrt32(float x){return (float) Math.Sqrt(x);}
 static float futhark_exp32(float x){return (float) Math.Exp(x);}
 static float futhark_cos32(float x){return (float) Math.Cos(x);}
