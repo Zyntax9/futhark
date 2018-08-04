@@ -407,7 +407,7 @@ compileProg module_name constructor imports defines ops userstate boilerplate pr
 
           case module_name of
             Just name -> do
-              entry_points <- mapM compileEntryFun $ filter (Imp.functionEntry . snd) funs
+              entry_points <- mapM (compileEntryFun pre_timing) $ filter (Imp.functionEntry . snd) funs
               let constructor' = constructorToConstructorDef constructor name at_inits'
               return [Namespace name [ClassDef $ PublicClass name $ member_decls' ++
                       constructor' : defines' ++ opencl_boilerplate ++
@@ -618,9 +618,9 @@ entryPointInput (i, Imp.OpaqueValue _ vs, e) =
   mapM_ entryPointInput $ zip3 (repeat i) (map Imp.TransparentValue vs) $
     map (\idx -> Field e $ "Item" ++ show (idx :: Int)) [1..]
 
-entryPointInput (_, Imp.TransparentValue (Imp.ScalarValue bt _ name), e) = do
+entryPointInput (_, Imp.TransparentValue (Imp.ScalarValue bt ept name), e) = do
   let vname' = Var $ compileName name
-      csconverter = compileTypeConverter bt
+      csconverter = compileTypeConverterExt bt ept
       cscall = simpleCall csconverter [e]
   stm $ Assign vname' cscall
 
@@ -911,17 +911,29 @@ copyMemoryDefaultSpace destmem destidx srcmem srcidx nbytes =
                                             , Var (compileName destmem), destidx,
                                               nbytes]
 
-compileEntryFun :: (Name, Imp.Function op)
+compileEntryFun :: [CSStmt] -> (Name, Imp.Function op)
                 -> CompilerM op s CSFunDef
-compileEntryFun entry@(_,Imp.Function _ outputs _ _ results args) = do
+compileEntryFun pre_timing entry@(_,Imp.Function _ outputs _ _ results args) = do
   let params = map (getType &&& extValueDescName) args
   let outputType = tupleOrSingleEntryT $ map getType results
 
   (fname', _, _, prepareIn, body_lib, _, prepareOut, res, _) <- prepareEntry entry
   let ret = Return $ tupleOrSingleEntry $ map snd res
   let outputDecls = map getDefaultDecl outputs
+      do_run = body_lib ++ pre_timing
+      (do_run_with_timing, close_runtime_file) = addTiming do_run
+
+      do_warmup_run =
+        If (Var "do_warmup_run") do_run []
+
+      do_num_runs =
+        For "i" (Var "num_runs") (do_run_with_timing ++ [Exp $ simpleCall "System.GC.Collect" []])
+
+
+
+
   return $ Def fname' outputType params $
-    prepareIn ++ outputDecls ++ body_lib ++ prepareOut ++ [ret]
+    prepareIn ++ outputDecls ++ [do_warmup_run, do_num_runs, close_runtime_file] ++ prepareOut ++ [ret]
 
   where getType :: Imp.ExternalValue -> CSType
         getType (Imp.OpaqueValue _ valueDescs) =
