@@ -183,25 +183,36 @@ static long zext_i16_i64(short x){return Convert.ToInt64(Convert.ToUInt64(x));}
 static long zext_i32_i64(int x){return Convert.ToInt64(Convert.ToUInt64(x));}
 static long zext_i64_i64(long x){return Convert.ToInt64(Convert.ToUInt64(x));}
 
+
+static sbyte ssignum(sbyte x){return (sbyte) Math.Sign(x);}
+static short ssignum(short x){return (short) Math.Sign(x);}
+static int ssignum(int x){return Math.Sign(x);}
+static long ssignum(long x){return (long) Math.Sign(x);}
+
+static int ssignum(byte x){return Math.Sign(x);}
+static int ssignum(ushort x){return Math.Sign(x);}
+static int ssignum(uint x){return Math.Sign(x);}
+
 static int ssignum8(sbyte x){return Math.Sign(x);}
 static int ssignum16(short x){return Math.Sign(x);}
 static int ssignum32(int x){return Math.Sign(x);}
 static int ssignum64(long x){return Math.Sign(x);}
+
+static int usignum(byte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
+static int usignum(ushort x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
+static int usignum(uint x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
+static int usignum(ulong x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
+
+static int usignum(sbyte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
+static int usignum(short x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
+static int usignum(int x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
+static int usignum(long x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
 
 static int usignum8(byte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
 static int usignum16(ushort x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
 static int usignum32(uint x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
 static int usignum64(ulong x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
 
-static int ssignum(sbyte x){return Math.Sign(x);}
-static int ssignum(short x){return Math.Sign(x);}
-static int ssignum(int x){return Math.Sign(x);}
-static int ssignum(long x){return Math.Sign(x);}
-
-static int usignum(byte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
-static int usignum(ushort x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
-static int usignum(uint x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
-static int usignum(ulong x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
 
 static float sitofp_i8_f32(sbyte x){return Convert.ToSingle(x);}
 static float sitofp_i16_f32(short x){return Convert.ToSingle(x);}
