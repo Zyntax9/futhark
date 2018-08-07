@@ -5,3 +5,20 @@ void panic(int exitcode, string str, params Object[] args)
     Console.Write(String.Format(str, args));
     Environment.Exit(exitcode);
 }
+
+void futharkAssert(bool assertion)
+{
+    if (!assertion)
+    {
+        Environment.Exit(1);
+    }
+}
+
+void futharkAssert(bool assertion, string errorMsg)
+{
+    if (!assertion)
+    {
+        Console.WriteLine(errorMsg);
+        Environment.Exit(1);
+    }
+}

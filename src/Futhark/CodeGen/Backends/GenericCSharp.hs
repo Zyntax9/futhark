@@ -459,6 +459,7 @@ compileProg module_name constructor imports defines ops userstate boilerplate pr
 
         defines' = [ Escape csScalar
                    , Escape csMemory
+                   , Escape csPanic
                    , Escape csExceptions
                    , Escape csReader] ++ defines
 
