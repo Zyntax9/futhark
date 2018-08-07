@@ -333,7 +333,7 @@ instance Pretty CSStmt where
   ppr (Comment s body) = text "//" <> text s </> stack (map ppr body)
 
   ppr (Assert e []) =
-    text "Debug.Assert" <> parens(ppr e) <> semi
+    text "Trace.Assert" <> parens(ppr e) <> semi
 
   ppr (Assert e exps) =
     let exps' = cat $ intersperse (text "+") $ map ppr exps
