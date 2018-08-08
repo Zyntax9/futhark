@@ -110,10 +110,11 @@ static double fmin64(double x, double y){ return Math.Min(x,y);}
 static float fmax32(float x, float y){ return Math.Max(x,y);}
 static double fmax64(double x, double y){ return Math.Max(x,y);}
 
-static sbyte pow8(sbyte x, sbyte y){ return Convert.ToSByte(Math.Pow(x,y));}
-static short pow16(short x, short y){ return Convert.ToInt16(Math.Pow(x,y));}
-static int pow32(int x, int y){ return Convert.ToInt32(Math.Pow(x,y));}
+static sbyte pow8(sbyte x, sbyte y){sbyte res = 1;for (var i = 0; i < y; i++){res *= x;}return res;}
+static short pow16(short x, short y){short res = 1;for (var i = 0; i < y; i++){res *= x;}return res;}
+static int pow32(int x, int y){int res = 1;for (var i = 0; i < y; i++){res *= x;}return res;}
 static long pow64(long x, long y){long res = 1;for (var i = 0; i < y; i++){res *= x;}return res;}
+
 static float fpow32(float x, float y){ return Convert.ToSingle(Math.Pow(x,y));}
 static double fpow64(double x, double y){ return Convert.ToDouble(Math.Pow(x,y));}
 
@@ -257,7 +258,8 @@ static long fptosi_f64_i64(double x){return Convert.ToInt64(Math.Truncate(x));}
 static double fpconv_f32_f64(float x){return Convert.ToDouble(x);}
 static float fpconv_f64_f32(double x){return Convert.ToSingle(x);}
 
-static double futhark_log2_64(double x){return Math.Log(x);}
+static double futhark_log64(double x){return Math.Log(x);}
+static double futhark_log2_64(double x){return Math.Log(x,2.0);}
 static double futhark_log10_64(double x){return Math.Log10(x);}
 static double futhark_sqrt64(double x){return Math.Sqrt(x);}
 static double futhark_exp64(double x){return Math.Exp(x);}
@@ -273,7 +275,8 @@ static bool futhark_isinf64(double x){return double.IsInfinity(x);}
 static long futhark_to_bits64(double x){return BitConverter.ToInt64(BitConverter.GetBytes(x),0);}
 static double futhark_from_bits64(long x){return BitConverter.ToDouble(BitConverter.GetBytes(x),0);}
 
-static float futhark_log2_32(float x){return (float) Math.Log(x);}
+static float futhark_log32(float x){return (float) Math.Log(x);}
+static float futhark_log2_32(float x){return (float) Math.Log(x,2.0);}
 static float futhark_log10_32(float x){return (float) Math.Log10(x);}
 static float futhark_sqrt32(float x){return (float) Math.Sqrt(x);}
 static float futhark_exp32(float x){return (float) Math.Exp(x);}
