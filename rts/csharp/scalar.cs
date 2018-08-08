@@ -14,20 +14,20 @@ static ushort unsigned(short x){ return (ushort) x;}
 static uint unsigned(int x){ return (uint) x;}
 static ulong unsigned(long x){ return (ulong) x;}
 
-static sbyte add8(sbyte x, sbyte y){ return Convert.ToSByte(x + y); }
-static short add16(short x, short y){ return Convert.ToInt16(x + y); }
-static int add32(int x, int y){ return x + y; }
-static long add64(long x, long y){ return x + y; }
+static sbyte add8(sbyte x, sbyte y){ return (sbyte) ((byte) x + (byte) y);}
+static short add16(short x, short y){ return (short) ((ushort) x + (ushort) y);}
+static int add32(int x, int y){ return (int) ((uint) x + (uint) y);}
+static long add64(long x, long y){ return (long) ((ulong) x + (ulong) y);}
 
-static sbyte sub8(sbyte x, sbyte y){ return Convert.ToSByte(x - y); }
-static short sub16(short x, short y){ return Convert.ToInt16(x - y); }
-static int sub32(int x, int y){ return x - y; }
-static long sub64(long x, long y){ return x - y;}
+static sbyte sub8(sbyte x, sbyte y){ return (sbyte) ((byte) x - (byte) y);}
+static short sub16(short x, short y){ return (short) ((ushort) x - (ushort) y);}
+static int sub32(int x, int y){ return (int) ((uint) x - (uint) y);}
+static long sub64(long x, long y){ return (long) ((ulong) x - (ulong) y);}
 
-static sbyte mul8(sbyte x, sbyte y){ return Convert.ToSByte(x * y); }
-static short mul16(short x, short y){ return Convert.ToInt16(x * y); }
-static int mul32(int x, int y){ return x * y; }
-static long mul64(long x, long y){ return x * y; }
+static sbyte mul8(sbyte x, sbyte y){ return (sbyte) ((byte) x * (byte) y);}
+static short mul16(short x, short y){ return (short) ((ushort) x * (ushort) y);}
+static int mul32(int x, int y){ return (int) ((uint) x * (uint) y);}
+static long mul64(long x, long y){ return (long) ((ulong) x * (ulong) y);}
 
 static sbyte or8(sbyte x, sbyte y){ return Convert.ToSByte(x | y); }
 static short or16(short x, short y){ return Convert.ToInt16(x | y); }
@@ -137,10 +137,10 @@ static bool ult16(short x, short y){ return unsigned(x) < unsigned(y) ;}
 static bool ult32(int x, int y){ return unsigned(x) < unsigned(y) ;}
 static bool ult64(long x, long y){ return unsigned(x) < unsigned(y) ;}
 
-static sbyte lshr8(sbyte x, sbyte y){ return Convert.ToSByte(Convert.ToByte(x) >> Convert.ToByte(y));}
-static short lshr16(short x, short y){ return Convert.ToInt16(Convert.ToUInt16(x) >> Convert.ToUInt16(y));}
-static int lshr32(int x, int y){ return Convert.ToInt32(Convert.ToUInt32(x) >> Convert.ToInt32(y));}
-static long lshr64(long x, long y){ return Convert.ToInt64(Convert.ToUInt64(x) >> Convert.ToInt32(y));}
+static sbyte lshr8(sbyte x, sbyte y){ return ToSByte((sbyte) ((uint) x) >> ((int) y));}
+static short lshr16(short x, short y){ return ToInt16((ushort) x >> (short) y);}
+static int lshr32(int x, int y){ return (int) ((uint) (x) >> (int) y);}
+static long lshr64(long x, long y){ return (long) ((ulong) x >> (int) y);}
 
 static sbyte sext_i8_i8(sbyte x){return (sbyte) (x);}
 static short sext_i8_i16(sbyte x){return (short) (x);}
@@ -257,7 +257,7 @@ static long fptosi_f64_i64(double x){return Convert.ToInt64(Math.Truncate(x));}
 static double fpconv_f32_f64(float x){return Convert.ToDouble(x);}
 static float fpconv_f64_f32(double x){return Convert.ToSingle(x);}
 
-static double futhark_log64(double x){return Math.Log(x);}
+static double futhark_log2_64(double x){return Math.Log(x);}
 static double futhark_log10_64(double x){return Math.Log10(x);}
 static double futhark_sqrt64(double x){return Math.Sqrt(x);}
 static double futhark_exp64(double x){return Math.Exp(x);}
@@ -273,7 +273,7 @@ static bool futhark_isinf64(double x){return double.IsInfinity(x);}
 static long futhark_to_bits64(double x){return BitConverter.ToInt64(BitConverter.GetBytes(x),0);}
 static double futhark_from_bits64(long x){return BitConverter.ToDouble(BitConverter.GetBytes(x),0);}
 
-static float futhark_log32(float x){return (float) Math.Log(x);}
+static float futhark_log2_32(float x){return (float) Math.Log(x);}
 static float futhark_log10_32(float x){return (float) Math.Log10(x);}
 static float futhark_sqrt32(float x){return (float) Math.Sqrt(x);}
 static float futhark_exp32(float x){return (float) Math.Exp(x);}
