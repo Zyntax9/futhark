@@ -93,16 +93,30 @@
         if (got.Value != c)
         {
             UngetChar(got.Value);
-            throw new Exception("ValueError");
+            throw new ValueError();
         }
         return true;
     }
 
     bool ParseSpecificString(string str)
     {
+        var read = new List<char>();
         foreach (var c in str.ToCharArray())
         {
-            ParseSpecificChar(c);
+            try
+            {
+                ParseSpecificChar(c);
+                read.Add(c);
+            }
+            catch(ValueError)
+            {
+                read.Reverse();
+                foreach (var cc in read)
+                {
+                    UngetChar(cc);
+                }
+                throw;
+            }
         }
 
         return true;
@@ -311,7 +325,7 @@
         return c.Value;
     }
 
-    float ReadStrHexFloat(char sign)
+    double ReadStrHexFloat(char sign)
     {
         var int_part = ParseHexInt();
         ParseSpecificChar('.');
@@ -329,10 +343,10 @@
             total_val = -1 * total_val;
         }
 
-        return Convert.ToSingle(total_val);
+        return Convert.ToDouble(total_val);
     }
 
-    float ReadStrDecimal()
+    double ReadStrDecimal()
     {
         SkipSpaces();
         var c = GetChar();
@@ -386,23 +400,70 @@
             expt = "0";
         }
 
-        return Convert.ToSingle(sign + bef + "." + aft + "E" + expt);
+        return Convert.ToDouble(sign + bef + "." + aft + "E" + expt);
     }
 
     float ReadStrF32()
     {
-        var x = ReadStrDecimal();
-        OptionalSpecificString("f32");
-        return x;
+        try
+        {
+            ParseSpecificString("f32.nan");
+            return Single.NaN;
+        }
+        catch (ValueError)
+        {
+            try
+            {
+                ParseSpecificString("-f32.inf");
+                return Single.NegativeInfinity;
+            }
+            catch (ValueError)
+            {
+                try
+                {
+                    ParseSpecificString("f32.inf");
+                    return Single.PositiveInfinity;
+                }
+                catch (ValueError)
+                {
+                    var x = ReadStrDecimal();
+                    OptionalSpecificString("f32");
+                    return Convert.ToSingle(x);
+                }
+            }
+        }
     }
 
-    float ReadStrF64()
+    double ReadStrF64()
     {
-        var x = ReadStrDecimal();
-        OptionalSpecificString("f64");
-        return x;
+        try
+        {
+            ParseSpecificString("f64.nan");
+            return Double.NaN;
+        }
+        catch (ValueError)
+        {
+            try
+            {
+                ParseSpecificString("-f64.inf");
+                return Double.NegativeInfinity;
+            }
+            catch (ValueError)
+            {
+                try
+                {
+                    ParseSpecificString("f64.inf");
+                    return Double.PositiveInfinity;
+                }
+                catch (ValueError)
+                {
+                    var x = ReadStrDecimal();
+                    OptionalSpecificString("f64");
+                    return x;
+                }
+            }
+        }
     }
-
     bool ReadStrBool()
     {
         SkipSpaces();
@@ -418,7 +479,7 @@
             return false;
         }
 
-        throw new Exception("ValueError");
+        throw new ValueError();
     }
 
     private (T[], int[]) ReadStrArrayElems<T>(int rank, Func<T> ReadStrScalar)
@@ -819,3 +880,21 @@
     {
         return ReadBinF64();
     }
+    void WriteValue(string s, sbyte x){Console.Write(s, x);}
+    void WriteValue(string s, short x){Console.Write(s, x);}
+    void WriteValue(string s, int x){Console.Write(s, x);}
+    void WriteValue(string s, long x){Console.Write(s, x);}
+    void WriteValue(string s, byte x){Console.Write(s, x);}
+    void WriteValue(string s, ushort x){Console.Write(s, x);}
+    void WriteValue(string s, uint x){Console.Write(s, x);}
+    void WriteValue(string s, ulong x){Console.Write(s, x);}
+    void WriteValue(string s, float x){if (Single.IsNaN(x))
+        {Console.Write("f32.nan");} else if (Single.IsNegativeInfinity(x))
+        {Console.Write("-f32.inf");} else if (Single.IsPositiveInfinity(x))
+        {Console.Write("f32.inf");} else
+        {Console.Write(s, x);}}
+    void WriteValue(string s, double x){if (Double.IsNaN(x))
+        {Console.Write("f64.nan");} else if (Double.IsNegativeInfinity(x))
+        {Console.Write("-f64.inf");} else if (Double.IsPositiveInfinity(x))
+        {Console.Write("f64.inf");} else
+        {Console.Write(s, x);}}

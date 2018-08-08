@@ -753,7 +753,7 @@ initializeGenericFunction fun tp = fun ++ "<" ++ tp ++ ">"
 printPrimStm :: CSExp -> PrimType -> Imp.Signedness -> CSStmt
 printPrimStm val t ept =
   case (t, ept) of
-    (IntType Int8, Imp.TypeUnsigned) -> p "{0}u8"
+    (IntType Int8, Imp.TypeUnsigned) -> p  "{0}u8"
     (IntType Int16, Imp.TypeUnsigned) -> p "{0}u16"
     (IntType Int32, Imp.TypeUnsigned) -> p "{0}u32"
     (IntType Int64, Imp.TypeUnsigned) -> p "{0}u64"
@@ -768,7 +768,7 @@ printPrimStm val t ept =
     (FloatType Float32, _) -> p "{0:0.000000}f32"
     (FloatType Float64, _) -> p "{0:0.000000}f64"
   where p s =
-          Exp $ simpleCall "Console.Write" [formatString s [val]]
+          Exp $ simpleCall "WriteValue" [String s, val]
 
 formatString :: String -> [CSExp] -> CSExp
 formatString fmt contents =

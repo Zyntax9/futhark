@@ -54,10 +54,10 @@ static short ashr16(short x, short y){ return Convert.ToInt16(x >> y); }
 static int ashr32(int x, int y){ return x >> y; }
 static long ashr64(long x, long y){ return x >> Convert.ToInt32(y); }
 
-static sbyte sdiv8(sbyte x, sbyte y){ return Convert.ToSByte(x / y); }
-static short sdiv16(short x, short y){ return Convert.ToInt16(x / y); }
-static int sdiv32(int x, int y){ return x / y; }
-static long sdiv64(long x, long y){ return x / y; }
+static sbyte sdiv8(sbyte x, sbyte y){ return (sbyte) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static short sdiv16(short x, short y){ return (short) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static int sdiv32(int x, int y){ return (int) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static long sdiv64(long x, long y){ return (long) Math.Truncate(ToSingle(x) / ToSingle(y)); }
 
 static sbyte smod8(sbyte x, sbyte y){ return Convert.ToSByte(x % y); }
 static short smod16(short x, short y){ return Convert.ToInt16(x % y); }
@@ -74,10 +74,10 @@ static short umod16(short x, short y){ return signed((ushort) (unsigned(x) % uns
 static int umod32(int x, int y){ return signed(unsigned(x) % unsigned(y)); }
 static long umod64(long x, long y){ return signed(unsigned(x) % unsigned(y)); }
 
-static sbyte squot8(sbyte x, sbyte y){ return (sbyte) Math.Floor(ToSingle(x) / ToSingle(y)); }
-static short squot16(short x, short y){ return (short) Math.Floor(ToSingle(x) / ToSingle(y)); }
-static int squot32(int x, int y){ return (int) Math.Floor(ToSingle(x) / ToSingle(y)); }
-static long squot64(long x, long y){ return (long) Math.Floor(ToSingle(x) / ToSingle(y)); }
+static sbyte squot8(sbyte x, sbyte y){ return (sbyte) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static short squot16(short x, short y){ return (short) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static int squot32(int x, int y){ return (int) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static long squot64(long x, long y){ return (long) Math.Truncate(ToSingle(x) / ToSingle(y)); }
 
 // static Maybe change srem, it calls np.fmod originally so i dont know
 static sbyte srem8(sbyte x, sbyte y){ return smod8(x,y);}
@@ -183,36 +183,15 @@ static short zext_i64_i16(long x){return (short)((ulong)(x));}
 static int   zext_i64_i32(long x){return (int)((ulong)(x));}
 static long  zext_i64_i64(long x){return (long)((ulong)(x));}
 
-
 static sbyte ssignum(sbyte x){return (sbyte) Math.Sign(x);}
 static short ssignum(short x){return (short) Math.Sign(x);}
 static int ssignum(int x){return Math.Sign(x);}
 static long ssignum(long x){return (long) Math.Sign(x);}
 
-static int ssignum(byte x){return Math.Sign(x);}
-static int ssignum(ushort x){return Math.Sign(x);}
-static int ssignum(uint x){return Math.Sign(x);}
-
-static int ssignum8(sbyte x){return Math.Sign(x);}
-static int ssignum16(short x){return Math.Sign(x);}
-static int ssignum32(int x){return Math.Sign(x);}
-static int ssignum64(long x){return Math.Sign(x);}
-
-static int usignum(byte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
-static int usignum(ushort x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
-static int usignum(uint x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
-static int usignum(ulong x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
-
-static int usignum(sbyte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
-static int usignum(short x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
-static int usignum(int x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
-static int usignum(long x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
-
-static int usignum8(byte x){return x < 0 ? ssignum8(Convert.ToSByte(-x)) : ssignum8(Convert.ToSByte(x));}
-static int usignum16(ushort x){return x < 0 ? ssignum16(Convert.ToInt16(-x)) : ssignum16(Convert.ToInt16(x));}
-static int usignum32(uint x){return x < 0 ? ssignum32(Convert.ToInt32(-x)) : ssignum32(Convert.ToInt32(x));}
-static int usignum64(ulong x){return x < 0 ? ssignum64(Convert.ToInt64(0-x)) : ssignum64(Convert.ToInt64(x));}
-
+static sbyte usignum(sbyte x){return ((byte) x > 0) ? (sbyte) 1 : (sbyte) 0;}
+static short usignum(short x){return ((ushort) x > 0) ? (short) 1 : (short) 0;}
+static int usignum(int x){return ((uint) x > 0) ? (int) 1 : (int) 0;}
+static long usignum(long x){return ((ulong) x > 0) ? (long) 1 : (long) 0;}
 
 static float sitofp_i8_f32(sbyte x){return Convert.ToSingle(x);}
 static float sitofp_i16_f32(short x){return Convert.ToSingle(x);}
