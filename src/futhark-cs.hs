@@ -32,7 +32,13 @@ main = compilerMain () []
              ToLibrary -> do
                let dllpath = outpath `addExtension` "dll"
                ret <- liftIO $ runProgramWithExitCode "csc"
-                 ["-out:" ++ dllpath, "-target:library", "-lib:"++mono_libs, "-r:Cloo.clSharp.dll,Mono.Options.dll", cspath, "/unsafe"] ""
+                 ["-out:" ++ dllpath
+                 , "-target:library"
+                 , "-lib:"++mono_libs
+                 , "-r:Cloo.clSharp.dll"
+                 , "-r:Mono.Options.dll"
+                 , cspath
+                 , "/unsafe"] ""
                case ret of
                  Left err ->
                    externalErrorS $ "Failed to run csc: " ++ show err
@@ -42,7 +48,12 @@ main = compilerMain () []
 
              ToExecutable -> do
                ret <- liftIO $ runProgramWithExitCode "csc"
-                 ["-out:" ++ outpath, "-lib:"++mono_libs, "-r:Cloo.clSharp.dll,Mono.Options.dll", cspath, "/unsafe"] ""
+                 ["-out:" ++ outpath
+                 , "-lib:"++mono_libs
+                 , "-r:Cloo.clSharp.dll"
+                 , "-r:Mono.Options.dll"
+                 , cspath
+                 , "/unsafe"] ""
                case ret of
                  Left err ->
                    externalErrorS $ "Failed to run csc: " ++ show err
