@@ -54,15 +54,43 @@ static short ashr16(short x, short y){ return Convert.ToInt16(x >> y); }
 static int ashr32(int x, int y){ return x >> y; }
 static long ashr64(long x, long y){ return x >> Convert.ToInt32(y); }
 
-static sbyte sdiv8(sbyte x, sbyte y){ return (sbyte) Math.Truncate(ToSingle(x) / ToSingle(y)); }
-static short sdiv16(short x, short y){ return (short) Math.Truncate(ToSingle(x) / ToSingle(y)); }
-static int sdiv32(int x, int y){ return (int) Math.Truncate(ToSingle(x) / ToSingle(y)); }
-static long sdiv64(long x, long y){ return (long) Math.Truncate(ToSingle(x) / ToSingle(y)); }
+static sbyte sdiv8(sbyte x, sbyte y){
+    var q = squot8(x,y);
+    var r = srem8(x,y);
+    return (sbyte) (q - (((r != (sbyte) 0) && ((r < (sbyte) 0) != (y < (sbyte) 0))) ? (sbyte) 1 : (sbyte) 0));
+}
+static short sdiv16(short x, short y){
+    var q = squot16(x,y);
+    var r = srem16(x,y);
+    return (short) (q - (((r != (short) 0) && ((r < (short) 0) != (y < (short) 0))) ? (short) 1 : (short) 0));
+}
+static int sdiv32(int x, int y){
+    var q = squot32(x,y);
+    var r = srem32(x,y);
+    return q - (((r != (int) 0) && ((r < (int) 0) != (y < (int) 0))) ? (int) 1 : (int) 0);
+}
+static long sdiv64(long x, long y){
+    var q = squot64(x,y);
+    var r = srem64(x,y);
+    return q - (((r != (long) 0) && ((r < (long) 0) != (y < (long) 0))) ? (long) 1 : (long) 0);
+}
 
-static sbyte smod8(sbyte x, sbyte y){ return Convert.ToSByte(x % y); }
-static short smod16(short x, short y){ return Convert.ToInt16(x % y); }
-static int smod32(int x, int y){ return x % y; }
-static long smod64(long x, long y){ return x % y; }
+static sbyte smod8(sbyte x, sbyte y){
+    var r = srem8(x,y);
+    return (sbyte) (r + ((r == (sbyte) 0 || (x > (sbyte) 0 && y > (sbyte) 0) || (x < (sbyte) 0 && y < (sbyte) 0)) ? (sbyte) 0 : y));
+}
+static short smod16(short x, short y){
+    var r = srem16(x,y);
+    return (short) (r + ((r == (short) 0 || (x > (short) 0 && y > (short) 0) || (x < (short) 0 && y < (short) 0)) ? (short) 0 : y));
+}
+static int smod32(int x, int y){
+    var r = srem32(x,y);
+    return (int) r + ((r == (int) 0 || (x > (int) 0 && y > (int) 0) || (x < (int) 0 && y < (int) 0)) ? (int) 0 : y);
+}
+static long smod64(long x, long y){
+    var r = srem64(x,y);
+    return (long) r + ((r == (long) 0 || (x > (long) 0 && y > (long) 0) || (x < (long) 0 && y < (long) 0)) ? (long) 0 : y);
+}
 
 static sbyte udiv8(sbyte x, sbyte y){ return signed((byte) (unsigned(x) / unsigned(y))); }
 static short udiv16(short x, short y){ return signed((ushort) (unsigned(x) / unsigned(y))); }
@@ -80,10 +108,10 @@ static int squot32(int x, int y){ return (int) Math.Truncate(ToSingle(x) / ToSin
 static long squot64(long x, long y){ return (long) Math.Truncate(ToSingle(x) / ToSingle(y)); }
 
 // static Maybe change srem, it calls np.fmod originally so i dont know
-static sbyte srem8(sbyte x, sbyte y){ return smod8(x,y);}
-static short srem16(short x, short y){ return smod16(x,y);}
-static int srem32(int x, int y){ return smod32(x,y);}
-static long srem64(long x, long y){ return smod64(x,y);}
+static sbyte srem8(sbyte x, sbyte y){ return (sbyte) ((sbyte) x % (sbyte) y);}
+static short srem16(short x, short y){ return (short) ((short) x % (short) y);}
+static int srem32(int x, int y){ return (int) ((int) x % (int) y);}
+static long srem64(long x, long y){ return (long) ((long) x % (long) y);}
 
 static sbyte smin8(sbyte x, sbyte y){ return Math.Min(x,y);}
 static short smin16(short x, short y){ return Math.Min(x,y);}
