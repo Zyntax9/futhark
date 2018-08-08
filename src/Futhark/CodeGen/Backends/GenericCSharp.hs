@@ -473,7 +473,7 @@ compileProg module_name constructor imports defines ops userstate boilerplate pr
           [ Assign (Var "entry_points") $
               Collection "Dictionary<string, Action>" $ zipWith Pair (map String entry_point_names) entry_points,
             If (simpleCall "!entry_points.ContainsKey" [Var "entry_point"])
-              [ Exp $ simpleCall "Console.WriteLine"
+              [ Exp $ simpleCall "Console.Error.WriteLine"
                   [simpleCall "string.Format"
                     [ String "No entry point '{0}'.  Select another with --entry point.  Options are:\n{1}"
                     , Var "entry_point"
@@ -960,7 +960,7 @@ callEntryFun pre_timing entry@(fname, Imp.Function _ outputs _ _ _ decl_args) = 
   let str_input = map readInput decl_args
   let outputDecls = map getDefaultDecl outputs
       exitcall = [
-          Exp $ simpleCall "Console.WriteLine" [formatString "Assertion.{0} failed" [Var "e"]]
+          Exp $ simpleCall "Console.Error.WriteLine" [formatString "Assertion.{0} failed" [Var "e"]]
         , Exp $ simpleCall "Environment.Exit" [Integer 1]
         ]
       except' = Catch (Var "Exception") exitcall
