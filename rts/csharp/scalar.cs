@@ -166,8 +166,8 @@ static bool ult16(short x, short y){ return unsigned(x) < unsigned(y) ;}
 static bool ult32(int x, int y){ return unsigned(x) < unsigned(y) ;}
 static bool ult64(long x, long y){ return unsigned(x) < unsigned(y) ;}
 
-static sbyte lshr8(sbyte x, sbyte y){ return ToSByte((sbyte) ((uint) x) >> ((int) y));}
-static short lshr16(short x, short y){ return ToInt16((ushort) x >> (short) y);}
+static sbyte lshr8(sbyte x, sbyte y){ return (sbyte) ((uint) x >> (int) y);}
+static short lshr16(short x, short y){ return (short) ((ushort) x >> (int) y);}
 static int lshr32(int x, int y){ return (int) ((uint) (x) >> (int) y);}
 static long lshr64(long x, long y){ return (long) ((ulong) x >> (int) y);}
 
