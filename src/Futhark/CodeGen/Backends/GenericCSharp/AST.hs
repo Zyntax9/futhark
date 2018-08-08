@@ -336,8 +336,9 @@ instance Pretty CSStmt where
     text "futharkAssert" <> parens(ppr e) <> semi
 
   ppr (Assert e exps) =
-    let exps' = cat $ intersperse (text "+") $ map ppr exps
-    in text "futharkAssert" <> parens(ppr e <> text "," <+> exps') <> semi
+    let exps' = stack $ intersperse (text ",") $ map ppr exps
+        formattedString = text "String.Format" <> parens exps'
+    in text "futharkAssert" <> parens(ppr e <> text "," <+> formattedString) <> semi
 
   ppr (Throw e) = text "throw" <+> ppr e <> semi
 

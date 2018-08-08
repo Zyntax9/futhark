@@ -18,7 +18,7 @@ void futharkAssert(bool assertion, string errorMsg)
 {
     if (!assertion)
     {
-        Console.WriteLine(errorMsg);
+        Console.Error.WriteLine(errorMsg);
         Environment.Exit(1);
     }
 }

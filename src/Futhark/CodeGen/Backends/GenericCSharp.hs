@@ -1246,11 +1246,12 @@ compileCode (Imp.Comment s code) = do
 
 compileCode (Imp.Assert e (Imp.ErrorMsg parts) (loc,locs)) = do
   e' <- compileExp e
-  let onPart (Imp.ErrorString s) = return $ String s
-      onPart (Imp.ErrorInt32 x) = compileExp x
-  parts' <- mapM onPart parts
-  stm $ Assert e' $ (String $ "At " ++ stacktrace ++ ":"):parts'
+  let onPart (i, Imp.ErrorString s) = return (printFormatArg i, String s)
+      onPart (i, Imp.ErrorInt32 x) = (printFormatArg i,) <$> compileExp x
+  (formatstrs, formatargs) <- unzip <$> mapM onPart (zip ([1..] :: [Integer]) parts)
+  stm $ Assert e' $ (String $ "Error at {0}:\n" <> concat formatstrs) : (String stacktrace : formatargs)
   where stacktrace = intercalate " -> " (reverse $ map locStr $ loc:locs)
+        printFormatArg = printf "{%d}"
 
 compileCode (Imp.Call dests fname args) = do
   args' <- mapM compileArg args
