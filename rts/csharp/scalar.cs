@@ -4,15 +4,15 @@
 // using static System.Math;
 
 // Scalar functions.
-static sbyte signed(byte x){ return Convert.ToSByte(x);}
-static short signed(ushort x){ return Convert.ToInt16(x);}
-static int signed(uint x){ return Convert.ToInt32(x);}
-static long signed(ulong x){ return Convert.ToInt64(x);}
+static sbyte signed(byte x){ return (sbyte) x;}
+static short signed(ushort x){ return (short) x;}
+static int signed(uint x){ return (int) x;}
+static long signed(ulong x){ return (long) x;}
 
-static byte unsigned(sbyte x){ return Convert.ToByte(x);}
-static ushort unsigned(short x){ return Convert.ToUInt16(x);}
-static uint unsigned(int x){ return Convert.ToUInt32(x);}
-static ulong unsigned(long x){ return Convert.ToUInt64(x);}
+static byte unsigned(sbyte x){ return (byte) x;}
+static ushort unsigned(short x){ return (ushort) x;}
+static uint unsigned(int x){ return (uint) x;}
+static ulong unsigned(long x){ return (ulong) x;}
 
 static sbyte add8(sbyte x, sbyte y){ return Convert.ToSByte(x + y); }
 static short add16(short x, short y){ return Convert.ToInt16(x + y); }
@@ -64,20 +64,20 @@ static short smod16(short x, short y){ return Convert.ToInt16(x % y); }
 static int smod32(int x, int y){ return x % y; }
 static long smod64(long x, long y){ return x % y; }
 
-static sbyte udiv8(sbyte x, sbyte y){ return Convert.ToSByte(unsigned(x) / unsigned(y)); }
-static short udiv16(short x, short y){ return Convert.ToInt16(unsigned(x) / unsigned(y)); }
-static int udiv32(int x, int y){ return Convert.ToInt32(unsigned(x) / unsigned(y)); }
-static long udiv64(long x, long y){ return Convert.ToInt64(unsigned(x) / unsigned(y)); }
+static sbyte udiv8(sbyte x, sbyte y){ return signed((byte) (unsigned(x) / unsigned(y))); }
+static short udiv16(short x, short y){ return signed((ushort) (unsigned(x) / unsigned(y))); }
+static int udiv32(int x, int y){ return signed(unsigned(x) / unsigned(y)); }
+static long udiv64(long x, long y){ return signed(unsigned(x) / unsigned(y)); }
 
-static sbyte umod8(sbyte x, sbyte y){ return Convert.ToSByte(unsigned(x) % unsigned(y)); }
-static short umod16(short x, short y){ return Convert.ToInt16(unsigned(x) % unsigned(y)); }
-static int umod32(int x, int y){ return Convert.ToInt32(unsigned(x) % unsigned(y)); }
-static long umod64(long x, long y){ return Convert.ToInt64(unsigned(x) % unsigned(y)); }
+static sbyte umod8(sbyte x, sbyte y){ return signed((byte) (unsigned(x) % unsigned(y))); }
+static short umod16(short x, short y){ return signed((ushort) (unsigned(x) % unsigned(y))); }
+static int umod32(int x, int y){ return signed(unsigned(x) % unsigned(y)); }
+static long umod64(long x, long y){ return signed(unsigned(x) % unsigned(y)); }
 
-static sbyte squot8(sbyte x, sbyte y){ return Convert.ToSByte(ToSingle(x) / ToSingle(y)); }
-static short squot16(short x, short y){ return Convert.ToInt16(ToSingle(x) / ToSingle(y)); }
-static int squot32(int x, int y){ return Convert.ToInt32(ToSingle(x) / ToSingle(y)); }
-static long squot64(long x, long y){ return Convert.ToInt64(ToSingle(x) / ToSingle(y)); }
+static sbyte squot8(sbyte x, sbyte y){ return (sbyte) Math.Floor(ToSingle(x) / ToSingle(y)); }
+static short squot16(short x, short y){ return (short) Math.Floor(ToSingle(x) / ToSingle(y)); }
+static int squot32(int x, int y){ return (int) Math.Floor(ToSingle(x) / ToSingle(y)); }
+static long squot64(long x, long y){ return (long) Math.Floor(ToSingle(x) / ToSingle(y)); }
 
 // static Maybe change srem, it calls np.fmod originally so i dont know
 static sbyte srem8(sbyte x, sbyte y){ return smod8(x,y);}
@@ -113,7 +113,7 @@ static double fmax64(double x, double y){ return Math.Max(x,y);}
 static sbyte pow8(sbyte x, sbyte y){ return Convert.ToSByte(Math.Pow(x,y));}
 static short pow16(short x, short y){ return Convert.ToInt16(Math.Pow(x,y));}
 static int pow32(int x, int y){ return Convert.ToInt32(Math.Pow(x,y));}
-static long pow64(long x, long y){ return Convert.ToInt64(Math.Pow(x,y));}
+static long pow64(long x, long y){long res = 1;for (var i = 0; i < y; i++){res *= x;}return res;}
 static float fpow32(float x, float y){ return Convert.ToSingle(Math.Pow(x,y));}
 static double fpow64(double x, double y){ return Convert.ToDouble(Math.Pow(x,y));}
 
@@ -142,46 +142,45 @@ static short lshr16(short x, short y){ return Convert.ToInt16(Convert.ToUInt16(x
 static int lshr32(int x, int y){ return Convert.ToInt32(Convert.ToUInt32(x) >> Convert.ToInt32(y));}
 static long lshr64(long x, long y){ return Convert.ToInt64(Convert.ToUInt64(x) >> Convert.ToInt32(y));}
 
-static sbyte sext_i8_i8(sbyte x){return Convert.ToSByte(x);}
-static sbyte sext_i16_i8(short x){return Convert.ToSByte(x);}
-static sbyte sext_i32_i8(int x){return Convert.ToSByte(x);}
-static sbyte sext_i64_i8(long x){return Convert.ToSByte(x);}
+static sbyte sext_i8_i8(sbyte x){return (sbyte) (x);}
+static short sext_i8_i16(sbyte x){return (short) (x);}
+static int sext_i8_i32(sbyte x){return (int) (x);}
+static long sext_i8_i64(sbyte x){return (long) (x);}
 
-static short sext_i8_i16(sbyte x){return Convert.ToInt16(x);}
-static short sext_i16_i16(short x){return Convert.ToInt16(x);}
-static short sext_i32_i16(int x){return Convert.ToInt16(x);}
-static short sext_i64_i16(long x){return Convert.ToInt16(x);}
+static sbyte sext_i16_i8(short x){return (sbyte) (x);}
+static short sext_i16_i16(short x){return (short) (x);}
+static int sext_i16_i32(short x){return (int) (x);}
+static long sext_i16_i64(short x){return (long) (x);}
 
-static int sext_i8_i32(sbyte x){return Convert.ToInt32(x);}
-static int sext_i16_i32(short x){return Convert.ToInt32(x);}
-static int sext_i32_i32(int x){return Convert.ToInt32(x);}
-static int sext_i64_i32(long x){return Convert.ToInt32(x);}
+static sbyte sext_i32_i8(int x){return (sbyte) (x);}
+static short sext_i32_i16(int x){return (short) (x);}
+static int sext_i32_i32(int x){return (int) (x);}
+static long sext_i32_i64(int x){return (long) (x);}
 
-static long sext_i8_i64(sbyte x){return Convert.ToInt64(x);}
-static long sext_i16_i64(short x){return Convert.ToInt64(x);}
-static long sext_i32_i64(int x){return Convert.ToInt64(x);}
-static long sext_i64_i64(long x){return Convert.ToInt64(x);}
+static sbyte sext_i64_i8(long x){return (sbyte) (x);}
+static short sext_i64_i16(long x){return (short) (x);}
+static int sext_i64_i32(long x){return (int) (x);}
+static long sext_i64_i64(long x){return (long) (x);}
 
+static sbyte zext_i8_i8(sbyte x)   {return (sbyte) ((byte)(x));}
+static short zext_i8_i16(sbyte x)  {return (short)((byte)(x));}
+static int   zext_i8_i32(sbyte x)  {return (int)((byte)(x));}
+static long  zext_i8_i64(sbyte x)  {return (long)((byte)(x));}
 
-static sbyte zext_i8_i8(sbyte x){return Convert.ToSByte(Convert.ToByte(x));}
-static sbyte zext_i16_i8(short x){return Convert.ToSByte(Convert.ToByte(x));}
-static sbyte zext_i32_i8(int x){return Convert.ToSByte(Convert.ToByte(x));}
-static sbyte zext_i64_i8(long x){return Convert.ToSByte(Convert.ToByte(x));}
+static sbyte zext_i16_i8(short x)  {return (sbyte) ((ushort)(x));}
+static short zext_i16_i16(short x) {return (short)((ushort)(x));}
+static int   zext_i16_i32(short x) {return (int)((ushort)(x));}
+static long  zext_i16_i64(short x) {return (long)((ushort)(x));}
 
-static short zext_i8_i16(sbyte x){return Convert.ToInt16(Convert.ToUInt16(x));}
-static short zext_i16_i16(short x){return Convert.ToInt16(Convert.ToUInt16(x));}
-static short zext_i32_i16(int x){return Convert.ToInt16(Convert.ToUInt16(x));}
-static short zext_i64_i16(long x){return Convert.ToInt16(Convert.ToUInt16(x));}
+static sbyte zext_i32_i8(int x){return (sbyte) ((uint)(x));}
+static short zext_i32_i16(int x){return (short)((uint)(x));}
+static int   zext_i32_i32(int x){return (int)((uint)(x));}
+static long  zext_i32_i64(int x){return (long)((uint)(x));}
 
-static int zext_i8_i32(sbyte x){return Convert.ToInt32(Convert.ToUInt32(x));}
-static int zext_i16_i32(short x){return Convert.ToInt32(Convert.ToUInt32(x));}
-static int zext_i32_i32(int x){return Convert.ToInt32(Convert.ToUInt32(x));}
-static int zext_i64_i32(long x){return Convert.ToInt32(Convert.ToUInt32(x));}
-
-static long zext_i8_i64(sbyte x){return Convert.ToInt64(Convert.ToUInt64(x));}
-static long zext_i16_i64(short x){return Convert.ToInt64(Convert.ToUInt64(x));}
-static long zext_i32_i64(int x){return Convert.ToInt64(Convert.ToUInt64(x));}
-static long zext_i64_i64(long x){return Convert.ToInt64(Convert.ToUInt64(x));}
+static sbyte zext_i64_i8(long x){return (sbyte) ((ulong)(x));}
+static short zext_i64_i16(long x){return (short)((ulong)(x));}
+static int   zext_i64_i32(long x){return (int)((ulong)(x));}
+static long  zext_i64_i64(long x){return (long)((ulong)(x));}
 
 
 static sbyte ssignum(sbyte x){return (sbyte) Math.Sign(x);}

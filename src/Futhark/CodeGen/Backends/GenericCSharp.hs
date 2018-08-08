@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings, GeneralizedNewtypeDeriving, LambdaCase #-}
+{-# LANGUAGE TupleSections #-}
 -- | A generic C# code generator which is polymorphic in the type
 -- of the operations.  Concretely, we use this to handle both
 -- sequential and OpenCL C# code.
@@ -84,6 +85,7 @@ import Futhark.CodeGen.Backends.GenericCSharp.Definitions
 import Futhark.Util.Pretty(pretty)
 import Futhark.Util (zEncodeString)
 import Futhark.Representation.AST.Attributes (builtInFunctions)
+import Text.Printf (printf)
 
 -- | A substitute expression compiler, tried before the main
 -- compilation function.
@@ -390,6 +392,7 @@ compileProg module_name constructor imports defines ops userstate boilerplate pr
                  , Using Nothing "static System.ValueTuple"
                  , Using Nothing "static System.Convert"
                  , Using Nothing "static System.Math"
+                 , Using Nothing "System.Numerics"
                  , Using Nothing "Cloo"
                  , Using Nothing "Cloo.Bindings"
                  , Using Nothing "Mono.Options" ] ++ imports
@@ -602,8 +605,8 @@ entryPointOutput (Imp.OpaqueValue _ vs) =
   CreateSystemTuple <$> mapM (entryPointOutput . Imp.TransparentValue) vs
 
 entryPointOutput (Imp.TransparentValue (Imp.ScalarValue bt ept name)) =
-  return $ simpleCall tf [Var $ compileName name]
-  where tf = compileTypeConverterExt bt ept
+  return $ cast $ Var $ compileName name
+  where cast = compileTypecastExt bt ept
 
 entryPointOutput (Imp.TransparentValue (Imp.ArrayValue mem _ Imp.DefaultSpace bt ept dims)) = do
   let src = Var $ compileName mem
@@ -621,9 +624,8 @@ entryPointInput (i, Imp.OpaqueValue _ vs, e) =
 
 entryPointInput (_, Imp.TransparentValue (Imp.ScalarValue bt _ name), e) = do
   let vname' = Var $ compileName name
-      csconverter = compileTypeConverter bt
-      cscall = simpleCall csconverter [e]
-  stm $ Assign vname' cscall
+      cast = compileTypecast bt
+  stm $ Assign vname' (cast e)
 
 entryPointInput (_, Imp.TransparentValue (Imp.ArrayValue mem memsize Imp.DefaultSpace bt _ dims), e) = do
   zipWithM_ (unpackDim e) dims [0..]
@@ -958,7 +960,7 @@ callEntryFun pre_timing entry@(fname, Imp.Function _ outputs _ _ _ decl_args) = 
   let str_input = map readInput decl_args
   let outputDecls = map getDefaultDecl outputs
       exitcall = [
-          Exp $ simpleCall "Console.WriteLine" [formatString "Assertion.{} failed" [Var "e"]]
+          Exp $ simpleCall "Console.WriteLine" [formatString "Assertion.{0} failed" [Var "e"]]
         , Exp $ simpleCall "Environment.Exit" [Integer 1]
         ]
       except' = Catch (Var "Exception") exitcall
@@ -1071,6 +1073,38 @@ compileBitConverter t =
     FloatType Float64 -> "BitConverter.ToDouble"
     Imp.Bool -> "BitConverter.ToBoolean"
     Cert -> "BitConverter.ToBoolean"
+
+-- | The ctypes type corresponding to a 'PrimType'.
+compileTypecastExt :: PrimType -> Imp.Signedness -> (CSExp -> CSExp)
+compileTypecastExt t ept =
+  let t' = case (t, ept) of
+       (IntType Int8     , Imp.TypeUnsigned)-> Primitive $ CSUInt UInt8T
+       (IntType Int16    , Imp.TypeUnsigned)-> Primitive $ CSUInt UInt16T
+       (IntType Int32    , Imp.TypeUnsigned)-> Primitive $ CSUInt UInt32T
+       (IntType Int64    , Imp.TypeUnsigned)-> Primitive $ CSUInt UInt64T
+       (IntType Int8     , _)-> Primitive $ CSInt Int8T
+       (IntType Int16    , _)-> Primitive $ CSInt Int16T
+       (IntType Int32    , _)-> Primitive $ CSInt Int32T
+       (IntType Int64    , _)-> Primitive $ CSInt Int64T
+       (FloatType Float32, _)-> Primitive $ CSFloat FloatT
+       (FloatType Float64, _)-> Primitive $ CSFloat DoubleT
+       (Imp.Bool         , _)-> Primitive BoolT
+       (Cert, _)-> Primitive $ CSInt Int8T
+  in Cast t'
+
+-- | The ctypes type corresponding to a 'PrimType'.
+compileTypecast :: PrimType -> (CSExp -> CSExp)
+compileTypecast t =
+  let t' = case t of
+        IntType Int8 -> Primitive $ CSInt Int8T
+        IntType Int16 -> Primitive $ CSInt Int16T
+        IntType Int32 -> Primitive $ CSInt Int32T
+        IntType Int64 -> Primitive $ CSInt Int64T
+        FloatType Float32 -> Primitive $ CSFloat FloatT
+        FloatType Float64 -> Primitive $ CSFloat DoubleT
+        Imp.Bool -> Primitive BoolT
+        Cert -> Primitive $ CSInt Int8T
+  in Cast t'
 
 -- | The ctypes type corresponding to a 'PrimType'.
 compileTypeConverter :: PrimType -> String
