@@ -293,3 +293,6 @@ static float futhark_from_bits32(int x){return BitConverter.ToSingle(BitConverte
 static float futhark_round32(float x){return (float) Math.Round(x);}
 static double futhark_round64(double x){return Math.Round(x);}
 
+static bool llt (bool x, bool y){return (!x && y);}
+static bool lle (bool x, bool y){return (!x || y);}
+
