@@ -850,12 +850,7 @@ prepareEntry (fname, Imp.Function _ outputs inputs _ results args) = do
       funTuple = tupleOrSingle $ fmap Var output_paramNames
 
 
-  (_, sizeDecls) <- collect' $ forM args $ \case
-    Imp.TransparentValue (Imp.ArrayValue mem _ Imp.DefaultSpace _ _ _) ->
-      stm $ Assign (Var $ compileName mem ++ "_nbytes") (Var $ compileName mem ++ ".Length")
-    Imp.TransparentValue (Imp.ArrayValue mem _ (Imp.Space _) bt _ dims) ->
-      stm $ Assign (Var $ compileName mem ++ "_nbytes") $ foldr (BinOp "*" . compileDim) (sizeOf $ compilePrimTypeToAST bt) dims
-    _ -> stm Pass
+  (_, sizeDecls) <- collect' $ forM args declsfunction
 
   (argexps_mem_copies, prepare_run) <- collect' $ forM inputs $ \case
     Imp.MemParam name space -> do
@@ -907,6 +902,15 @@ prepareEntry (fname, Imp.Function _ outputs inputs _ results args) = do
         initCopy (varName, Imp.MemParam _ space) = declMem' varName space
         initCopy _ = Pass
 
+        valueDescFun (Imp.ArrayValue mem _ Imp.DefaultSpace _ _ _) =
+            stm $ Assign (Var $ compileName mem ++ "_nbytes") (Var $ compileName mem ++ ".Length")
+        valueDescFun (Imp.ArrayValue mem _ (Imp.Space _) bt _ dims) =
+            stm $ Assign (Var $ compileName mem ++ "_nbytes") $ foldr (BinOp "*" . compileDim) (sizeOf $ compilePrimTypeToAST bt) dims
+        valueDescFun _ = stm Pass
+
+        declsfunction (Imp.TransparentValue v) = valueDescFun v
+        declsfunction (Imp.OpaqueValue _ vs) = mapM_ valueDescFun vs
+
 copyMemoryDefaultSpace :: VName -> CSExp -> VName -> CSExp -> CSExp ->
                           CompilerM op s ()
 copyMemoryDefaultSpace destmem destidx srcmem srcidx nbytes =
@@ -930,7 +934,7 @@ compileEntryFun pre_timing entry@(_,Imp.Function _ outputs _ _ results args) = d
         If (Var "do_warmup_run") do_run []
 
       do_num_runs =
-        For "i" (Var "num_runs") (do_run_with_timing ++ [Exp $ simpleCall "System.GC.Collect" []])
+        For "i" (Var "num_runs") do_run_with_timing
 
 
 

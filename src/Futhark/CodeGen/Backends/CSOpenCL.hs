@@ -53,9 +53,7 @@ compileProg module_name prog = do
                      }
         imports = [ Using Nothing "System.Runtime.CompilerServices"
                   , Using Nothing "System.Runtime.InteropServices" ]
-        defines = [ Escape csOpenCL
-                  , Escape csPanic]
-
+        defines = [ Escape csOpenCL ]
 cliOptions :: [Option]
 cliOptions = [ Option { optionLongName = "platform"
                       , optionShortName = Just 'p'
