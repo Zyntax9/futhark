@@ -1065,7 +1065,7 @@ compilePrimTypeExt t ept =
 compileBitConverter :: PrimType -> String
 compileBitConverter t =
   case t of
-    IntType Int8 -> "BitConverter.ToInt8"
+    IntType Int8 -> "BitConverter.ToSByte"
     IntType Int16 -> "BitConverter.ToInt16"
     IntType Int32 -> "BitConverter.ToInt32"
     IntType Int64 -> "BitConverter.ToInt64"
@@ -1169,6 +1169,11 @@ compileExp (Imp.LeafExp (Imp.ScalarVar vname) _) =
 
 compileExp (Imp.LeafExp (Imp.SizeOf t) _) =
   return $ simpleCall (compileTypeConverter $ IntType Int32) [Integer $ primByteSize t]
+
+compileExp (Imp.LeafExp (Imp.Index src (Imp.Count iexp) (IntType Int8) DefaultSpace _) _) = do
+  let src' = compileName src
+  iexp' <- compileExp iexp
+  return $ Cast (Primitive $ CSInt Int8T) (Index (Var src') (IdxExp iexp'))
 
 compileExp (Imp.LeafExp (Imp.Index src (Imp.Count iexp) bt DefaultSpace _) _) = do
   iexp' <- compileExp iexp

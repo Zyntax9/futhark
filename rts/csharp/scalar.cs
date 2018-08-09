@@ -242,25 +242,25 @@ static double uitofp_i16_f64(short x){return Convert.ToDouble(unsigned(x));}
 static double uitofp_i32_f64(int x){return Convert.ToDouble(unsigned(x));}
 static double uitofp_i64_f64(long x){return Convert.ToDouble(unsigned(x));}
 
-static byte fptoui_f32_i8(float x){return Convert.ToByte(Math.Truncate(x));}
-static byte fptoui_f64_i8(double x){return Convert.ToByte(Math.Truncate(x));}
-static sbyte fptosi_f32_i8(float x){return Convert.ToSByte(Math.Truncate(x));}
-static sbyte fptosi_f64_i8(double x){return Convert.ToSByte(Math.Truncate(x));}
+static byte fptoui_f32_i8(float x){return (byte) (Math.Truncate(x));}
+static byte fptoui_f64_i8(double x){return (byte) (Math.Truncate(x));}
+static sbyte fptosi_f32_i8(float x){return (sbyte) (Math.Truncate(x));}
+static sbyte fptosi_f64_i8(double x){return (sbyte) (Math.Truncate(x));}
 
-static ushort fptoui_f32_i16(float x){return Convert.ToUInt16(Math.Truncate(x));}
-static ushort fptoui_f64_i16(double x){return Convert.ToUInt16(Math.Truncate(x));}
-static short fptosi_f32_i16(float x){return Convert.ToInt16(Math.Truncate(x));}
-static short fptosi_f64_i16(double x){return Convert.ToInt16(Math.Truncate(x));}
+static ushort fptoui_f32_i16(float x){return (ushort) (Math.Truncate(x));}
+static ushort fptoui_f64_i16(double x){return (ushort) (Math.Truncate(x));}
+static short fptosi_f32_i16(float x){return (short) (Math.Truncate(x));}
+static short fptosi_f64_i16(double x){return (short) (Math.Truncate(x));}
 
-static uint fptoui_f32_i32(float x){return Convert.ToUInt32(Math.Truncate(x));}
-static uint fptoui_f64_i32(double x){return Convert.ToUInt32(Math.Truncate(x));}
-static int fptosi_f32_i32(float x){return Convert.ToInt32(Math.Truncate(x));}
-static int fptosi_f64_i32(double x){return Convert.ToInt32(Math.Truncate(x));}
+static uint fptoui_f32_i32(float x){return (uint) (Math.Truncate(x));}
+static uint fptoui_f64_i32(double x){return (uint) (Math.Truncate(x));}
+static int fptosi_f32_i32(float x){return (int) (Math.Truncate(x));}
+static int fptosi_f64_i32(double x){return (int) (Math.Truncate(x));}
 
-static ulong fptoui_f32_i64(float x){return Convert.ToUInt64(Math.Truncate(x));}
-static ulong fptoui_f64_i64(double x){return Convert.ToUInt64(Math.Truncate(x));}
-static long fptosi_f32_i64(float x){return Convert.ToInt64(Math.Truncate(x));}
-static long fptosi_f64_i64(double x){return Convert.ToInt64(Math.Truncate(x));}
+static ulong fptoui_f32_i64(float x){return (ulong) (Math.Truncate(x));}
+static ulong fptoui_f64_i64(double x){return (ulong) (Math.Truncate(x));}
+static long fptosi_f32_i64(float x){return (long) (Math.Truncate(x));}
+static long fptosi_f64_i64(double x){return (long) (Math.Truncate(x));}
 
 static double fpconv_f32_f64(float x){return Convert.ToDouble(x);}
 static float fpconv_f64_f32(double x){return Convert.ToSingle(x);}

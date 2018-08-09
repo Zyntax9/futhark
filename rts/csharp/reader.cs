@@ -564,7 +564,7 @@
     {
         ParseSpecificString("empty");
         ParseSpecificChar('(');
-        for (int i = 0; i < rank; i++) {
+        for (int i = 0; i < rank-1; i++) {
             ParseSpecificString("[]");
         }
         ParseSpecificString(typeName);
